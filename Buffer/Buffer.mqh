@@ -12,6 +12,8 @@ class Buffer : public Array
       ENUM_INDEXBUFFER_TYPE _type;
       bool                  _display;
       Plot*                 _plot;
+      int                   _candlesToPreload;
+      int                   _iterationOnBuffer;
       
    public :
    
@@ -27,10 +29,12 @@ class Buffer : public Array
       
       /** 
        */
-      Buffer( bool display = true ) 
-         :  _slot  ( TOTAL_BUFFERS++ ), 
-           _display( display ), 
-           _type   ( display == true ? INDICATOR_DATA : INDICATOR_CALCULATIONS )
+      Buffer( int iterationOnBuffer = 1, int candlesToPreload = 1, bool display = true ) 
+         :  _slot             ( TOTAL_BUFFERS++ ), 
+           _display           ( display ), 
+           _type              ( display == true ? INDICATOR_DATA : INDICATOR_CALCULATIONS ),
+           _candlesToPreload  ( candlesToPreload ),
+           _iterationOnBuffer ( iterationOnBuffer )
          {
             _buffers.add(pointer(this));
             SetIndexBuffer(slot(), _items, _type);
@@ -43,53 +47,60 @@ class Buffer : public Array
       
       /** 
        */
-      virtual void onCalculate ( double &buffer[], int rates_total, int prev_calculated ) 
-      {
-         for(int i = prev_calculated, _i = 0 ; i < rates_total ; i++) {
-            onCalculateCandle( i, buffer[_i++] );
-         }
-      };
-      
-      /** 
-       */
       virtual int onCalculate ( int rates_total, int prev_calculated ) 
       {
-         onCalculateFirst( rates_total, prev_calculated );
+         double b[];
+         onCalculate ( b, rates_total, prev_calculated );
+      
          for( int i = 1, t = _buffers.length(); i < t; i++ ) {
-            //buffer(i).onCalculateFirst ( rates_total, prev_calculated );
-            buffer(i).onCalculateSecond( pointer(this), rates_total, prev_calculated );
+            buffer(i).onCalculate( b, rates_total, prev_calculated );
          }
          return rates_total;
       };
       
-      /** 
-       */
-      virtual void onCalculateFirst ( int rates_total, int prev_calculated ) 
+      double formatDouble (double value) 
       {
-         
+         return NormalizeDouble(value, 15);
       };
       
       /** 
        */
-      virtual void onCalculateSecond ( Buffer* parentBuffer, int rates_total, int prev_calculated ) 
-      {         
-         for(int i = prev_calculated; i < parentBuffer.length() ; i++) {
-            onCalculateCandle(parentBuffer, i);
+      virtual void onCalculate ( double &buffer[], int rates_total, int prev_calculated ) 
+      {
+         double b[];
+         if(prev_calculated > 0){
+            copy(b);
+         } else {
+            ArrayResize( b, ArraySize( buffer ) + 1 );
          }         
+         
+         for( int i = 1; i <= _iterationOnBuffer; i++ ) 
+         {  
+            int iii = 0;
+            for( int ii = prev_calculated; ii < rates_total; ii++ ) 
+            {
+               if( ii <= _candlesToPreload + 1 ) {
+                  continue;
+               }
+               
+               double value = onCalculate( buffer, ii, buffer[iii] );
+               if(value != NULL) {
+                  b[ii] = value;
+               }
+               
+               iii++;
+            }
+            
+            ArrayCopy( buffer, b );
+         }
+         add( buffer );
       };
       
       /** 
        */
-      virtual void onCalculateCandle ( Buffer* parentBuffer, int candle ) 
+      virtual double onCalculate ( double &buffer[], int candle, double value ) 
       {
-         onCalculateCandle( candle, parentBuffer.get( candle ) );
-      };
-      
-      /** 
-       */
-      virtual void onCalculateCandle ( int candle, double value ) 
-      {
-         add( candle, value > 0 ? value : 0 );
+         return value;
       };
       
       /** 

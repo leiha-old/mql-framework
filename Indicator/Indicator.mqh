@@ -80,7 +80,7 @@ class Indicator : public Buffer
       
       /** 
        */
-      virtual void onCalculateFirst ( int rates_total, int prev_calculated ) 
+      virtual void onCalculate ( double &buffer[], int rates_total, int prev_calculated ) 
       {
          if(IsStopped()) {
             return;
@@ -105,11 +105,10 @@ class Indicator : public Buffer
             start = prev_calculated - 1;
          }
          
-         double _buffer[];
-         if( CopyBuffer( handle(), 0, 0, to_copy, _buffer ) <= 0 ) {
+         if( CopyBuffer( handle(), 0, 0, to_copy, buffer ) <= 0 ) {
             return; 
          }
          
-         onCalculate( _buffer, rates_total, start );
+         Buffer::onCalculate ( buffer, rates_total, start );     
       };
 };
