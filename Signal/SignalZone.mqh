@@ -32,12 +32,12 @@ class SignalZone : public BufferSignal
    
       /** 
        */
-      virtual bool isShort( Buffer* buffer, int i ) 
+      virtual bool isShort( double &buffer[], int candle ) 
       {
-         if(   i > shiftTotal
-            && buffer.get( i -  shiftFront )        <  overbought 
-            && buffer.get( i - ( shiftFront + 1 ) ) >= overbought
-            && isShiftTrend( buffer, i, overbought )
+         if(   candle > shiftTotal
+            && buffer[ candle -  shiftFront ]        <  overbought 
+            && buffer[ candle - ( shiftFront + 1 ) ] >= overbought
+            && isShiftTrend( buffer, candle, overbought )
          ) {
             return true;
          }         
@@ -46,12 +46,12 @@ class SignalZone : public BufferSignal
       
       /** 
        */
-      virtual bool isLong( Buffer* buffer, int i ) 
+      virtual bool isLong( double &buffer[], int candle ) 
       {
-         if(   i > shiftTotal
-            && buffer.get( i -  shiftFront )        >= oversold 
-            && buffer.get( i - ( shiftFront + 1 ) ) <  oversold
-            && isShiftTrend( buffer, i, oversold )
+         if(   candle > shiftTotal
+            && buffer[ candle -  shiftFront ]        >= oversold 
+            && buffer[ candle - ( shiftFront + 1 ) ] <  oversold
+            && isShiftTrend( buffer, candle, oversold )
          ) {
             return true;
          }         

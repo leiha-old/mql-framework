@@ -16,13 +16,15 @@ class SignalTrend : public BufferSignal
    
       /** 
        */
-      virtual bool isLong( Buffer* buffer, int i )
+      virtual bool isLong( double &buffer[], int candle )
       {
-         double pivot = buffer.get( i - shiftFront );
-         if(   i     > shiftTotal 
-            && pivot > buffer.get( i - ( shiftFront + 1 ) )
-            && isShiftTrend( buffer, i, pivot )
+         double pivot = buffer[ candle ];
+         
+         if(   candle > shiftTotal 
+            && pivot  > buffer[ candle - 1 ]
+            //&& isShiftTrend( buffer, candle, pivot )
           ) {      
+            
             return true;
           }
           return false;
@@ -30,13 +32,15 @@ class SignalTrend : public BufferSignal
       
       /** 
        */
-      virtual bool isShort( Buffer* buffer, int i )
+      virtual bool isShort( double &buffer[], int candle )
       {
-         double pivot = buffer.get( i - shiftFront );
-         if(   i     > shiftTotal 
-            && pivot < buffer.get( i - ( shiftFront + 1 ) )
-            && isShiftTrend( buffer, i, pivot )
-          ) {      
+         double pivot = buffer[ candle ];
+         
+         if(   candle > shiftTotal 
+            && pivot  < buffer[ candle - 1 ]
+            //&& isShiftTrend( buffer, candle, pivot )
+          ) {
+          
             return true;
           }
           return false;

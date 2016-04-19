@@ -7,8 +7,22 @@ class SignalCrossing : public BufferSignal
 {
    protected :
    
-      Buffer* _buffer1;
-      Buffer* _buffer2;
+      /**
+       */
+      virtual void onIterateCandle (
+         double  value, 
+         double &bufferLong [], 
+         double &bufferShort[], 
+         double &bufferSrc  [], 
+         int     candle
+      ) {
+      
+         double v = (buffer( 2 ).get( candle ) + buffer( 3 ).get( candle )) / 2;
+        
+         bufferLong [ candle ] = isLong ( bufferSrc, candle) ? v : 0;
+         bufferShort[ candle ] = isShort( bufferSrc, candle) ? v : 0;
+         
+      };
 
    public :
    
@@ -17,26 +31,20 @@ class SignalCrossing : public BufferSignal
       SignalCrossing( Buffer* buffer1, Buffer* buffer2, int back = 0, int front = 0, bool display = true )
          : BufferSignal( back, front, display )
          {
-            _buffer1 = buffer1;
-            _buffer2 = buffer2;
+            _buffers.add  ( buffer1 );
+            _buffers.add  ( buffer2 );
+            _internalBuffers = _internalBuffers + 2;
          }
       ;
       
       /** 
        */
-      virtual void onCalculateCandle ( Buffer* parentBuffer, int candle ) 
+      virtual bool isLong( double &buffer[], int candle )
       {
-         BufferSignal::onCalculateCandle( _buffer1, candle );
-      };
-   
-      /** 
-       */
-      virtual bool isLong( Buffer* buffer, int i )
-      {
-         if(   i > shiftTotal
-            && _buffer1.get( i -   shiftFront )       >  _buffer2.get( i -   shiftFront )
-            && _buffer1.get( i - ( shiftFront + 1 ) ) <= _buffer2.get( i - ( shiftFront + 1 ) )
-            //&& isShiftTrend( buffer, i, overbought )
+         if(   candle > shiftTotal
+            && buffer( 2 ).get( candle     ) >  buffer( 3 ).get( candle     )
+            && buffer( 2 ).get( candle - 1 ) <= buffer( 3 ).get( candle - 1 )
+            //&& isShiftTrend( buffer, candle, overbought )
          ) {
             return true;
          }         
@@ -45,12 +53,12 @@ class SignalCrossing : public BufferSignal
       
       /** 
        */
-      virtual bool isShort( Buffer* buffer, int i )
+      virtual bool isShort( double &buffer[], int candle )
       {
-         if(   i > shiftTotal
-            && _buffer1.get( i -   shiftFront )       <  _buffer2.get( i -   shiftFront )
-            && _buffer1.get( i - ( shiftFront + 1 ) ) >= _buffer2.get( i - ( shiftFront + 1 ) )
-            //&& isShiftTrend( buffer, i, overbought )
+         if(   candle > shiftTotal
+            && buffer( 2 ).get( candle     ) <  buffer( 3 ).get( candle     )
+            && buffer( 2 ).get( candle - 1 ) >= buffer( 3 ).get( candle - 1 )
+            //&& isShiftTrend( buffer, candle, overbought )
          ) {
             return true;
          }         

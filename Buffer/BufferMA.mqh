@@ -9,6 +9,29 @@ class BufferMA : public Buffer
    
       int _period;
       
+      /**
+       */
+      virtual void onIterate (
+         double &buffer   [], 
+         double &bufferSrc[], 
+         int     iterator, 
+         int     rates_total, 
+         int     prev_calculated
+      ) {
+         ArrayCopy(bufferSrc, buffer);
+      };
+      
+      /** 
+       */
+      virtual void onIterateCandle ( double value, double &buffer[], double &bufferSrc[], int candle ) 
+      {
+         for( int ii = 1; ii < _period; ii++ ) 
+         {
+            value += formatDouble(bufferSrc[ candle - ii ]);
+         }
+         buffer[ candle ] = ( value / _period );
+      };
+      
    public : 
         
       /** 
@@ -20,17 +43,6 @@ class BufferMA : public Buffer
             
          }
          ;
-         
-      /** 
-       */
-      virtual double onCalculate ( double &buffer[], int candle, double value ) 
-      {
-         for( int ii = 1; ii < _period; ii++ ) 
-         {
-            value += buffer[ candle - ii ];
-         }
-         return ( value / _period );
-      };
       
       BufferMA* smooth(int level = 1) {
          _iterationOnBuffer = level;

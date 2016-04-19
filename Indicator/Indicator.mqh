@@ -80,16 +80,16 @@ class Indicator : public Buffer
       
       /** 
        */
-      virtual void onCalculate ( double &buffer[], int rates_total, int prev_calculated ) 
+      virtual int onCalculate ( int rates_total, int prev_calculated ) 
       {
          if(IsStopped()) {
-            return;
+            return rates_total;
          }
          
          int calculated = BarsCalculated( handle() );
          if( calculated < rates_total ) {
             //int error = GetLastError();
-            return;
+            return rates_total;
          }
          
          int to_copy = rates_total;
@@ -100,15 +100,18 @@ class Indicator : public Buffer
             }
          }
          
-         int start = 0;
+         int    start = 0;
+         double buffer[];
          if( prev_calculated > 0 ) {
             start = prev_calculated - 1;
+            copy( buffer );
          }
          
-         if( CopyBuffer( handle(), 0, 0, to_copy, buffer ) <= 0 ) {
-            return; 
+         if( CopyBuffer( handle(), 0, start, to_copy, buffer ) <= 0 ) {
+            return rates_total; 
          }
-         
-         Buffer::onCalculate ( buffer, rates_total, start );     
+      
+         onCalculate ( buffer, rates_total, prev_calculated );
+         return rates_total;
       };
 };

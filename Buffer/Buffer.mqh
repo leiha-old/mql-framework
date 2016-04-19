@@ -14,23 +14,111 @@ class Buffer : public Array
       Plot*                 _plot;
       int                   _candlesToPreload;
       int                   _iterationOnBuffer;
+      int                   _internalBuffers;
+      
+      /**
+       */
+      virtual void onInit ( 
+         double &buffer   [], 
+         double &bufferSrc[], 
+         int     rates_total, 
+         int     prev_calculated
+      ) {
+      
+         ArrayResize( buffer, ArraySize( bufferSrc ) + 1 );
+         
+      };
+      
+      /**
+       */
+      virtual void onBegin ( 
+         double &buffer   [], 
+         double &bufferSrc[], 
+         int     rates_total, 
+         int     prev_calculated
+      ) {
+      
+         copy( buffer );
+         
+      };
+      
+      /**
+       */
+      virtual void onIterateCandleNotEnoughData ( 
+         double  value, 
+         double &buffer   [], 
+         double &bufferSrc[], 
+         int     candle 
+      ) {
+      
+         buffer[ candle ] = value;
+         
+      };
+      
+      /**
+       */
+      virtual void onIterateCandle ( 
+         double  value, 
+         double &buffer   [], 
+         double &bufferSrc[], 
+         int     candle 
+      ) {
+      
+         buffer[ candle ] = value;
+         
+      };
+      
+      /**
+       */
+      virtual void onIterate (
+         double &buffer   [], 
+         double &bufferSrc[], 
+         int     iterator, 
+         int     rates_total, 
+         int     prev_calculated
+      ) {
+      
+      };
+      
+      /**
+       */
+      virtual void onIterateFinished ( 
+         double &buffer   [], 
+         double &bufferSrc[], 
+         int     rates_total, 
+         int     prev_calculated
+      ) {
+         
+      };
+      
+      /**
+       */
+      virtual void onFinished ( 
+         double &buffer   [], 
+         double &bufferSrc[], 
+         int     rates_total, 
+         int     prev_calculated
+      ) {
+      
+         add( buffer );
+                           
+      };
+      
+      /** 
+       */
+      double formatDouble (double value) 
+      {
+         return NormalizeDouble(value, 15);
+      };
       
    public :
    
       int static TOTAL_BUFFERS;
       
       /** 
-       *//*
-      Buffer(ENUM_INDEXBUFFER_TYPE bufferType = INDICATOR_DATA) 
-         : _slot((TOTAL_BUFFERS++)), _type(bufferType)
-      {      
-         SetIndexBuffer(slot(), _items, bufferType);
-      };*/
-      
-      /** 
        */
       Buffer( int iterationOnBuffer = 1, int candlesToPreload = 1, bool display = true ) 
-         :  _slot             ( TOTAL_BUFFERS++ ), 
+         : _slot              ( TOTAL_BUFFERS++ ), 
            _display           ( display ), 
            _type              ( display == true ? INDICATOR_DATA : INDICATOR_CALCULATIONS ),
            _candlesToPreload  ( candlesToPreload ),
@@ -38,8 +126,19 @@ class Buffer : public Array
          {
             _buffers.add(pointer(this));
             SetIndexBuffer(slot(), _items, _type);
+           _internalBuffers = 1;
          }
          ;
+      
+      /** 
+       */
+      virtual void onCalculate ( 
+         double &bufferLong [], 
+         double &bufferShort[], 
+         double &bufferSrc  [], 
+         int     rates_total, 
+         int     prev_calculated
+      ) {}
       
       /** 
        */
@@ -47,60 +146,44 @@ class Buffer : public Array
       
       /** 
        */
-      virtual int onCalculate ( int rates_total, int prev_calculated ) 
+      virtual void onCalculate ( double &bufferSrc[], int rates_total, int prev_calculated ) 
       {
-         double b[];
-         onCalculate ( b, rates_total, prev_calculated );
-      
-         for( int i = 1, t = _buffers.length(); i < t; i++ ) {
-            buffer(i).onCalculate( b, rates_total, prev_calculated );
+         double buffer[];
+         double bufferSrcCopy[];
+         ArrayCopy( bufferSrcCopy, bufferSrc );
+         
+         if( prev_calculated == 0 ) 
+         {
+            onInit( buffer, bufferSrc, rates_total, prev_calculated );
+         } 
+         else 
+         {
+            onBegin( buffer, bufferSrc, rates_total, prev_calculated );
          }
-         return rates_total;
-      };
-      
-      double formatDouble (double value) 
-      {
-         return NormalizeDouble(value, 15);
-      };
-      
-      /** 
-       */
-      virtual void onCalculate ( double &buffer[], int rates_total, int prev_calculated ) 
-      {
-         double b[];
-         if(prev_calculated > 0){
-            copy(b);
-         } else {
-            ArrayResize( b, ArraySize( buffer ) + 1 );
-         }         
          
          for( int i = 1; i <= _iterationOnBuffer; i++ ) 
          {  
-            int iii = 0;
             for( int ii = prev_calculated; ii < rates_total; ii++ ) 
             {
-               if( ii <= _candlesToPreload + 1 ) {
+               double value = formatDouble( bufferSrcCopy[ ii ] );
+               if( ii <= _candlesToPreload + 1 ) 
+               {
+                  onIterateCandleNotEnoughData( value, buffer, bufferSrcCopy, ii );
                   continue;
-               }
+               }              
                
-               double value = onCalculate( buffer, ii, buffer[iii] );
-               if(value != NULL) {
-                  b[ii] = value;
-               }
-               
-               iii++;
+               onIterateCandle( value, buffer, bufferSrcCopy, ii );
             }
-            
-            ArrayCopy( buffer, b );
+            onIterate( buffer, bufferSrcCopy, i, rates_total, prev_calculated );
          }
-         add( buffer );
-      };
-      
-      /** 
-       */
-      virtual double onCalculate ( double &buffer[], int candle, double value ) 
-      {
-         return value;
+         
+         onIterateFinished( buffer, bufferSrc, rates_total, prev_calculated );
+         
+         for( int i = _internalBuffers, t = _buffers.length(); i < t; i++ ) {
+            buffer( i ).onCalculate( buffer, rates_total, prev_calculated );
+         }                  
+         
+         onFinished( buffer, bufferSrc, rates_total, prev_calculated );
       };
       
       /** 
