@@ -2,7 +2,7 @@
 
 This framework help you to build your own Indicator with MQL 5 (MetaQuotes Query Language)
 
-NB : It's the first iteration but it's an active project so if you find a bug or you want a new feature make an issue ;)
+NB : It's the second iteration but it's an active project so if you find a bug or you want a new feature make an issue ;)
 
 Example of custom indicator :
 
@@ -31,45 +31,76 @@ class Test : public Indicator
        */
       void onInit () 
       {
-         BufferMA*       maA = new BufferMA  (7);
-         BufferMA*       maB = new BufferMA  (21);         
-         BufferMA*       maC = new BufferMA  (55);
+         BufferMA*       maA = new BufferMA      (  7 );
+         BufferMA*       maB = new BufferMA      ( 21 );         
+         BufferMA*       maC = new BufferMA      ( 55 );
+         SignalZone*     szA = new SignalZone    ( 70, 30 );
+         SignalZone*     szB = new SignalZone    ( 70, 30 );
+         SignalCrossing* scA = new SignalCrossing( maB, maC );
+         SignalTrend*    stA = new SignalTrend   (  );
          
-         BufferMA*       maBB = new BufferMA (21);
-         
-         maB.buffer(maBB);
-         maBB.plot()
-            .c0lor(clrGreen)
-            .type (DRAW_LINE)            
+         maA
+            .smooth(1)
+            .buffer(maB)
+            .buffer(szB)
+            .plot()            
+               .c0lor(clrLightPink)
+               .type (DRAW_LINE)
+               .style(STYLE_DOT)
             ;
          
-         
-         SignalCrossing* scA = new SignalCrossing(maB, maC);
-         SignalZone*     szA = new SignalZone(70, 30);
-         
-         maA.plot()
-            .c0lor(clrRed)
-            .type (DRAW_LINE)            
-            ;
-         
-         maB.plot()
-            .c0lor(clrBlue)
-            .type (DRAW_LINE)
+         maB
+            .smooth(2)
+            .buffer(stA)
+            .plot()
+               .c0lor(clrBlue)
+               .type (DRAW_NONE)
+               .style(STYLE_DOT)
             ;
             
-         maC.plot()
-            .c0lor(clrOrange)
-            .type (DRAW_LINE)
+         maC
+            .smooth(2)
+            .plot()
+               .c0lor(clrOrange)
+               .type (DRAW_LINE)
             ;
          
+         stA.plot(0)
+            .emptyValue()
+            .c0lor(clrGreen)
+            .type (DRAW_LINE)
+            .width(1)
+            ;
+         
+         stA.plot(1)
+            .emptyValue()
+            .c0lor(clrRed)
+            .type (DRAW_LINE)
+            .width(1)
+            ;
+            
          szA.plot(0)
             .emptyValue()
-            .c0lor(clrViolet)
+            .c0lor(clrPink)
+            .type (DRAW_ARROW)
+            .width(1)
+            ;
+            
+         szA.plot(1)
+            .emptyValue()
+            .c0lor(clrLightGreen)
+            .type (DRAW_ARROW)
+            .width(1)
+            ;
+            
+         szB.plot(0)
+            .emptyValue()
+            .c0lor(clrRed)
             .type (DRAW_ARROW)
             .width(5)
             ;
             
-         szA.plot(1)
+         szB.plot(1)
             .emptyValue()
             .c0lor(clrGreen)
             .type (DRAW_ARROW)
@@ -90,16 +121,18 @@ class Test : public Indicator
             .width(5)
             ;
       
-         this.handle(iRSI( NULL, PERIOD_M30, 14, PRICE_CLOSE))
+         this.handle(iRSI( NULL, PERIOD_CURRENT, 14, PRICE_CLOSE))
             .digits(2)
+            
             .buffer(maA)
-            .buffer(maB)
             .buffer(maC)
-            .buffer(szA)
+            
             .buffer(scA)
+            .buffer(szA)
+            
             .plot()
                .c0lor(clrGray)
-               .type (DRAW_LINE)
+               .type (DRAW_NONE)
                .style(STYLE_DASHDOT)          
             ;
 
