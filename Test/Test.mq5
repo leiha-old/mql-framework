@@ -31,6 +31,29 @@ class Test : public Indicator
       void onInit () 
       {  
          
+         /**/
+         this.handle ( iRSI( NULL, PERIOD_CURRENT, 14, PRICE_CLOSE ) )
+             .digits ( 0 )
+             .plot   (   )
+                  .c0lor( clrGray       )
+                  .type ( DRAW_LINE     )
+                  .style( STYLE_DASHDOT )
+         ;         
+         
+         /**/
+         this.ma( 7 )
+            .plot(  )
+               .c0lor( clrRed      )
+               .type ( DRAW_LINE   )
+               .style( STYLE_SOLID )
+         ;
+         
+         /**/
+         this.sz( 70, 30 )
+            .shift( 1, 1 )
+            .plot ( 0, clrBlue , DRAW_ARROW, STYLE_SOLID )
+            .plot ( 1, clrGreen, DRAW_ARROW, STYLE_SOLID )
+         ;
       };
 };
 

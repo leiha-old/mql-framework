@@ -14,13 +14,34 @@ class Object //: public CObject
       T* pointer (T &o) {
          return GetPointer(o);
       };
+      
+      Object* _parent;
    
    public :
+   
+      /**
+       */
+      Object* parent( Object &o )
+      {
+         _parent = pointer( o );
+         return pointer( this );
+      };
       
       /**
        */
-      Object* end()
+      template < typename T >
+      T* end( T &o )
       {
-         return pointer(this);
+         return pointer( o );
+      };
+      
+      /**
+       */
+      virtual Object* end()
+      {
+         return _parent 
+            ? _parent 
+            : pointer ( this )
+            ;
       };
 };

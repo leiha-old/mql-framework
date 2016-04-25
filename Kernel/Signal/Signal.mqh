@@ -18,7 +18,7 @@ class Signal : public Calculator
       Signal(  )
          : Calculator(  )
          {
-            
+           _buffers.add( new Buffer() );
          }
          ;
          
@@ -51,10 +51,24 @@ class Signal : public Calculator
       
       /**
        */
-      virtual bool isShiftTrend( double &buffer[], int candle, double pivot ) ;
+      virtual bool isShiftTrend( double &buffer[], int candle, double pivot );
+      
+      virtual void onIterateCandle( double &bufferSrc[], int candle, double value ) ;
      
 // -----
 // --------------------     
+};
+
+/** 
+ */
+void 
+   Signal::onIterateCandle 
+      ( double &bufferSrc[], int candle, double value ) 
+{
+   double v = ( ( value + NormalizeDouble( bufferSrc[ candle - 1 ], 20 ) ) / 2 );
+   buffer(0).add( candle, ( isLong ( bufferSrc, candle) ? v : 0 ) );
+   buffer(1).add( candle, ( isShort( bufferSrc, candle) ? v : 0 ) );
+   
 };
 
 /** 

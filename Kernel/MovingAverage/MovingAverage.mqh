@@ -73,7 +73,7 @@ void
       value += this.formatValue( bufferSrc[ candle - ii ] );
    }
    
-   bufferSrc[ candle ] = ( value / period );
+   buffer().add( candle, ( value / period ) );
 };
 
 /** 
@@ -103,5 +103,5 @@ MovingAverage*
       ( int shift ) 
 {
    _period = shift;
-   return pointer( this );
+   return preloadCandles( shift );
 };

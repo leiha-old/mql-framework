@@ -4,6 +4,8 @@
 #property version   "1.00"
 
 #include "../Calculator/Calculator.mqh"
+#include "../MovingAverage/MovingAverage.mqh"
+#include "../Signal/SignalZone.mqh"
 
 class Indicator : public Calculator
 {  
@@ -40,9 +42,21 @@ class Indicator : public Calculator
        */
       Indicator* digits( int digits );
       
+      /**
+       */
+      Indicator* handle( int handle );
+      
       /** 
        */
       virtual int onCalculate ( int rates_total, int prev_calculated );
+      
+      /** 
+       */
+      MovingAverage* ma ( int period );
+      
+      /** 
+       */
+      SignalZone* sz ( double bought, double sold ) ;
       
    protected :
       
@@ -80,6 +94,48 @@ int
       (  ) 
 {
    return _handle;
+};
+
+/* 
+ * ------
+ */
+Indicator*
+   Indicator::handle 
+      ( int handle ) 
+{
+   _handle = handle;
+   return pointer( this );
+};
+
+/* 
+ * ------
+ */
+MovingAverage* 
+   Indicator::ma
+      ( int period ) 
+{
+   MovingAverage* m = new MovingAverage(  );
+   m.period( period );
+
+   _calculators.add( m );
+
+   return m;
+};
+
+/* 
+ * ------
+ */
+SignalZone* 
+   Indicator::sz
+      ( double bought, double sold ) 
+{
+   SignalZone* s = new SignalZone(  );
+   
+   s.overZone( bought, sold );
+
+   _calculators.add( s );
+
+   return s;
 };
 
 /* 
@@ -181,16 +237,16 @@ int
    }
    
    int    start = 0;
-   double buffer[];
+   double bufferSrc[];
    if( prev_calculated > 0 ) {
       start = prev_calculated - 1;
-      //copy( buffer );
+      buffer().copy( bufferSrc );
    }
    
-   if( CopyBuffer( handle(), 0, start, to_copy, buffer ) <= 0 ) {
+   if( CopyBuffer( handle(), 0, start, to_copy, bufferSrc ) <= 0 ) {
       return rates_total; 
    }
 
-   //onCalculate ( buffer, rates_total, prev_calculated );
+   onCalculate ( bufferSrc, rates_total, prev_calculated );
    return rates_total;
 };

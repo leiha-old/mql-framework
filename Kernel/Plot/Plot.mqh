@@ -16,8 +16,9 @@ class Plot : public Object
  */   
       /** 
        */
-      Plot(  )
-         : Object(  ) 
+      Plot( int slot )
+         : Object(  ),
+           _slot ( slot )
          {
          
          }
@@ -83,14 +84,17 @@ class Plot : public Object
        * Get first plot 
        * The plot is created if not already present
        */
-      Plot* get(  );      
+      Plot* get(  );
+      
+      /**
+       */    
       
    protected :
       
       /**
        * Create a new plot 
        */
-      virtual Plot* create(  );
+      virtual Plot* create( int slot );
       
       /** 
        */
@@ -250,9 +254,9 @@ Plot*
  */
 Plot* 
    Plot::create
-      (  ) 
+      ( int slot ) 
 {
-   return new Plot();
+   return new Plot( slot );
 }; 
 
 /** 

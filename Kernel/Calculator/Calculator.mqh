@@ -19,7 +19,8 @@ class Calculator : public Object
       Calculator(  )
          : Object(  )
          {
-            
+            _buffers     = new Buffer(); 
+            _calculators = new Map();
          }
       ;
 
@@ -33,7 +34,16 @@ class Calculator : public Object
       
       /** 
        */
-      virtual int getCandlesToPreload            (  ) { return 1; };
+      int preloadCandles                         (  ) { return _shiftTotal; };
+      
+      /** 
+       */
+      Calculator* preloadCandles                 ( int candles ) 
+      {       
+         _shiftBack  = candles; 
+         _shiftTotal = _shiftBack + _shiftFront;
+         return pointer( this );
+      };
             
       /** 
        */
@@ -54,11 +64,11 @@ class Calculator : public Object
       
       /** 
        */
-      virtual void onIterateCandleNotEnoughData  ( double &bufferSrc[], int candle, double value ){};
+      virtual void onIterateCandleNotEnoughData  ( double &bufferSrc[], int candle, double value );
       
       /** 
        */
-      virtual void onIterateCandle               ( double &bufferSrc[], int candle, double value ){};
+      virtual void onIterateCandle               ( double &bufferSrc[], int candle, double value );
       
       /** 
        */
@@ -67,6 +77,10 @@ class Calculator : public Object
       /** 
        */
       void onCalculate                           ( double &bufferSrc[], int rates_total, int prev_calculated );
+      
+      /** 
+       */
+      virtual void onCalculate                   ( Buffer* buffer, int rates_total, int prev_calculated );
       
       /** 
        */
@@ -96,7 +110,23 @@ class Calculator : public Object
       
       /** 
        */
+      Plot* plot( int i );
+      
+      /** 
+       */
+      Calculator* plot( int i, int c0lor, ENUM_DRAW_TYPE type = DRAW_LINE, ENUM_LINE_STYLE style = STYLE_SOLID );
+      
+      /** 
+       */
+      Plot* plot(  );
+      
+      /** 
+       */
       virtual Calculator* shift( int back, int front );
+      
+      /**
+       */
+      virtual Calculator* end();
    
    protected :
    
@@ -138,11 +168,41 @@ class Calculator : public Object
 /*
  * ------
  */
+void 
+   Calculator::onIterateCandleNotEnoughData  
+      ( double &bufferSrc[], int candle, double value )
+{
+   buffer().add( candle, bufferSrc[candle] );
+};
+
+/*
+ * ------
+ */
+void 
+    Calculator::onIterateCandle
+      ( double &bufferSrc[], int candle, double value )
+{
+   buffer().add( candle, bufferSrc[candle] );
+};
+
+/*
+ * ------
+ */
 Calculator* 
    Calculator::create
       (  ) 
 {
    return new Calculator();
+};
+
+/* 
+ * ------
+ */
+Calculator* 
+   Calculator::end
+      (  )
+{
+   return Object::end(  );
 };
 
 /* 
@@ -193,6 +253,41 @@ Buffer*
 /* 
  * ------
  */
+Plot* 
+   Calculator::plot
+      ( int i ) 
+{
+   return buffer( i ).plot(  );
+};
+
+/* 
+ * ------
+ */
+Plot* 
+   Calculator::plot
+      (  ) 
+{
+   return buffer(  ).plot(  );
+};
+
+ /** 
+  */
+Calculator* 
+   Calculator::plot
+      ( int i, int c0lor, ENUM_DRAW_TYPE type = DRAW_LINE, ENUM_LINE_STYLE style = STYLE_SOLID )
+{
+   this.plot( i )
+      .c0lor( c0lor ) 
+      .type ( type  )
+      .style( style )
+      ;
+      
+   return pointer( this );   
+};
+
+/* 
+ * ------
+ */
 Calculator* 
    Calculator::shift
       ( int back, int front ) 
@@ -202,6 +297,18 @@ Calculator*
    _shiftTotal = back + front + 1;
    
    return pointer( this );
+};
+
+/* 
+ * ------
+ */
+void 
+   Calculator::onCalculate 
+      ( Buffer* buffer, int rates_total, int prev_calculated )
+{
+   double b[];
+   buffer.copy( b );
+   this.onCalculate( b, rates_total, prev_calculated );
 };
 
 /* 
@@ -230,6 +337,13 @@ void
       }      
    }
    
+   for( int i = 0, t = _calculators.length(); i < t; i++ ) 
+   {
+      this.get( i )
+         .onCalculate( this.buffer(), rates_total, prev_calculated )
+         ;
+   }
+   
    this.onFinished( bufferSrc );
 };
 
@@ -241,7 +355,7 @@ void
       ( double &bufferSrc[], int rates_total, int prev_calculated, int candle )
 {
    double value = this.formatValue( bufferSrc[ candle ] );
-   if( candle <= this.getCandlesToPreload() ) 
+   if( candle <= this.preloadCandles() ) 
    {
       this.onIterateCandleNotEnoughData( bufferSrc, candle, value );
    } 
