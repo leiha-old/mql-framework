@@ -3,18 +3,16 @@
 #property version   "1.00"
 #property strict
 
-#include "Core/Object.mqh"
-#include "Core/Array.mqh"
-#include "Core/Map.mqh"
+//#include "./Vendors/iMAOnArray.mqh"
 
-#include "Plot/Plot.mqh"
+#include "./Kernel/Data/Data.mqh"
 
-#include "Buffer/Buffer.mqh"
-#include "Buffer/BufferSignal.mqh"
-#include "Buffer/BufferMA.mqh"
+#include "./Kernel/Signal/SignalCrossing.mqh"
+#include "./Kernel/Signal/SignalTrend.mqh"
+#include "./Kernel/Signal/SignalZone.mqh"
 
-#include "Signal/SignalCrossing.mqh"
-#include "Signal/SignalTrend.mqh"
-#include "Signal/SignalZone.mqh"
+#include "./Kernel/Indicator/Indicator.mqh"
 
-#include "Indicator/Indicator.mqh"
+#include "./Kernel/MovingAverage/MovingAverage.mqh"
+
+#include "./Kernel/Plot/Plot.mqh"
