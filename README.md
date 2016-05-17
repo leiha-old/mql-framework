@@ -2,7 +2,7 @@
 
 This framework help you to build your own Indicator with MQL 5 or 4 (MetaQuotes Query Language)
 
-NB : It's the second iteration but it's an active project so if you find a bug or you want a new feature make an issue ;)
+NB : if you find a bug or you want a new feature make an issue ;)
 
 Example of custom indicator :
 
