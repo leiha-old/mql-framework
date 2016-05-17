@@ -27,7 +27,7 @@ class Map : public Object
       
       /** 
        */
-      Map* add( Object* o );
+      int add( Object* o );
       
       /**
        */
@@ -73,12 +73,13 @@ Object*
 
 /** 
  */
-Map* 
+int
    Map::add
       ( Object* o ) 
 {
-   _items[ extend( 1 ) - 1 ] = o;
-   return pointer(this);
+   int i = extend( 1 ) - 1;
+   _items[ i ] = o;
+   return i;
 };
 
 /**

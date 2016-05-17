@@ -3,15 +3,15 @@
 #property link      "https://github.com/leiha"
 #property version   "1.00"
 
-//#include <Object.mqh>
+//#include <TOTO.mqh>
 class Object //: public CObject
 {
    protected :
    
-      /** 
+      /**
        */
       template < typename T >
-      T* pointer (T &o) {
+      T* pointer ( T &o ) {
          return GetPointer(o);
       };
       

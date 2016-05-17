@@ -26,6 +26,14 @@ class SignalTrend : public Signal
  */  
    
    protected :
+   
+      /** 
+       */
+      virtual bool isLong         ( double &buffer[], int candle );
+      
+      /** 
+       */
+      virtual bool isShort        ( double &buffer[], int candle );
       
 /* --------------------
  * Properties
@@ -35,4 +43,38 @@ class SignalTrend : public Signal
       
 // -----
 // --------------------    
+};
+
+/** 
+ */
+bool 
+   SignalTrend::isLong
+      ( double &buffer[], int candle )
+{
+   double pivot = buffer[ candle ];
+   
+   if( pivot  > buffer[ candle - 1 ]
+      //&& isShiftTrend( buffer, candle, pivot )
+    ) {      
+      
+      return true;
+    }
+    return false;
+};
+
+/** 
+ */
+bool 
+   SignalTrend::isShort
+      ( double &buffer[], int candle )
+{
+   double pivot = buffer[ candle ];
+   
+   if( pivot  < buffer[ candle - 1 ]
+      //&& isShiftTrend( buffer, candle, pivot )
+    ) {
+    
+      return true;
+    }
+    return false;
 };

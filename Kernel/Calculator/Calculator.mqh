@@ -5,6 +5,7 @@
 
 #include "../Core/Object.mqh"
 #include "../Buffer/Buffer.mqh"
+#include "../Plot/PlotUnifier.mqh"
 
 class Calculator : public Object
 {
@@ -19,8 +20,13 @@ class Calculator : public Object
       Calculator(  )
          : Object(  )
          {
-            _buffers     = new Buffer(); 
             _calculators = new Map();
+            _buffers     = new Buffer(); 
+            _plotUnifier = new PlotUnifier( _buffers );
+            
+            this.totalOfInternalCalculators( 1 )
+                .add                       ( pointer( this ) )
+                ;
          }
       ;
 
@@ -72,6 +78,14 @@ class Calculator : public Object
       
       /** 
        */
+      virtual void onEachBeginIteration          ( double &bufferSrc[], int rates_total, int prev_calculated, int iteration ){};
+      
+      /** 
+       */
+      virtual void onEachEndIteration            ( double &bufferSrc[], int rates_total, int prev_calculated, int iteration ){};
+      
+      /** 
+       */
       virtual void onFinished                    ( double &bufferSrc[] ){};
       
       /** 
@@ -114,11 +128,7 @@ class Calculator : public Object
       
       /** 
        */
-      Calculator* plot( int i, int c0lor, ENUM_DRAW_TYPE type = DRAW_LINE, ENUM_LINE_STYLE style = STYLE_SOLID );
-      
-      /** 
-       */
-      Plot* plot(  );
+      PlotUnifier* plot(  );
       
       /** 
        */
@@ -127,6 +137,10 @@ class Calculator : public Object
       /**
        */
       virtual Calculator* end();
+      
+      /**
+       */
+      Calculator* add( Calculator* c );
    
    protected :
    
@@ -134,6 +148,14 @@ class Calculator : public Object
        * Create a new Calculator 
        */
       virtual Calculator* create(  );
+      
+      /**
+       */
+      int totalOfInternalCalculators(  );
+            
+      /**
+       */
+      Calculator* totalOfInternalCalculators( int total );
  
 /* --------------------
  * Properties
@@ -142,12 +164,20 @@ class Calculator : public Object
    /**
     * Container of Buffers needed for the calculator
     */
-   Buffer* _buffers;
+   Buffer*      _buffers;
    
    /**
     * Container of Calculators Children who need this Calculator on slave
     */
-   Map*    _calculators;
+   Map*         _calculators;
+   
+   /**
+    */
+   PlotUnifier* _plotUnifier;
+      
+   /**
+    */
+   int     _totalOfInternalCalculators;
    
    /**
     */
@@ -165,6 +195,39 @@ class Calculator : public Object
 // -------------------- 
 };
 
+
+/** 
+ */
+Calculator* 
+   Calculator::add
+      ( Calculator* c )
+{
+   _calculators.add( c );
+
+   return pointer( this ); 
+};
+
+/*
+ * ------
+ */
+int 
+   Calculator::totalOfInternalCalculators
+      (  )
+{
+   return _totalOfInternalCalculators;
+};
+
+/*
+ * ------
+ */
+Calculator* 
+   Calculator::totalOfInternalCalculators
+      ( int total )
+{
+   _totalOfInternalCalculators = total;
+   return  pointer( this );
+};
+
 /*
  * ------
  */
@@ -172,7 +235,7 @@ void
    Calculator::onIterateCandleNotEnoughData  
       ( double &bufferSrc[], int candle, double value )
 {
-   buffer().add( candle, bufferSrc[candle] );
+   buffer().data[candle] = bufferSrc[candle];
 };
 
 /*
@@ -182,7 +245,7 @@ void
     Calculator::onIterateCandle
       ( double &bufferSrc[], int candle, double value )
 {
-   buffer().add( candle, bufferSrc[candle] );
+   buffer().data[candle] = bufferSrc[candle];
 };
 
 /*
@@ -263,26 +326,11 @@ Plot*
 /* 
  * ------
  */
-Plot* 
+PlotUnifier* 
    Calculator::plot
       (  ) 
 {
-   return buffer(  ).plot(  );
-};
-
- /** 
-  */
-Calculator* 
-   Calculator::plot
-      ( int i, int c0lor, ENUM_DRAW_TYPE type = DRAW_LINE, ENUM_LINE_STYLE style = STYLE_SOLID )
-{
-   this.plot( i )
-      .c0lor( c0lor ) 
-      .type ( type  )
-      .style( style )
-      ;
-      
-   return pointer( this );   
+   return _plotUnifier;
 };
 
 /* 
@@ -318,6 +366,7 @@ void
    Calculator::onCalculate 
       ( double &bufferSrc[], int rates_total, int prev_calculated ) 
 {
+   // -
    if( prev_calculated == 0 ) 
    {
       this.onBeginFirstOnly    ( bufferSrc );
@@ -327,23 +376,31 @@ void
       this.onBeginFirstExcluded( bufferSrc );
    }
    
+   // -
    this.onBegin( bufferSrc );
    
-   for( int i = 1; i <= this.getIterationsNeeded(); i++ ) 
-   {  
+   // -
+   for( int i = 1, t = this.getIterationsNeeded(); i <= t; i++ ) 
+   {
+      this.onEachBeginIteration( bufferSrc, rates_total, prev_calculated, i );
+   
       for( int candle = prev_calculated; candle < rates_total; candle++ ) 
       {
          this.onIterate( bufferSrc, rates_total, prev_calculated, candle );
-      }      
+      }
+      
+      this.onEachEndIteration( bufferSrc, rates_total, prev_calculated, i );
    }
    
-   for( int i = 0, t = _calculators.length(); i < t; i++ ) 
+   // -
+   for( int i = ( this.totalOfInternalCalculators() ), t = _calculators.length(); i < t; i++ ) 
    {
       this.get( i )
          .onCalculate( this.buffer(), rates_total, prev_calculated )
          ;
    }
    
+   // -
    this.onFinished( bufferSrc );
 };
 

@@ -9,9 +9,11 @@ class Array : public Object
 { 
    protected :
    
-      double _items[];      
+            
       
    public :
+   
+      double data[];
    
       /** 
        */
@@ -23,11 +25,11 @@ class Array : public Object
       
       /** 
        */
-      Array* set  ( int i, double item );
+      Array* value  ( int i, double item );
       
       /**
        */
-      double get  ( int i );
+      double value  ( int i );
       
       /**
        */
@@ -59,7 +61,7 @@ Array*
       ( int i, double item ) 
 {
    extend( 1 );
-   _items[ i ] = item;
+   data[ i ] = item;
    
    return pointer( this );
 };
@@ -67,10 +69,10 @@ Array*
 /** 
  */
 Array* 
-   Array::set 
+   Array::value 
       ( int i, double item ) 
 {
-   _items[ i ] = item;
+   data[ i ] = item;
    
    return pointer( this );
 };
@@ -78,10 +80,10 @@ Array*
 /**
  */
 double 
-   Array::get
+   Array::value
       ( int i ) 
 {
-   return _items[ i ];
+   return data[ i ];
 };      
 
 /**
@@ -90,7 +92,7 @@ int
    Array::length 
       (  ) 
 {
-   return ArraySize( _items );
+   return ArraySize( data );
 };
 
 /**
@@ -100,7 +102,7 @@ int
       ( int number = 1 ) 
 {
    int l = length(  ) + number;
-       l = ArrayResize( _items, l );
+       l = ArrayResize( data, l );
        
    return l;
 };
@@ -111,7 +113,7 @@ int
    Array::add 
       ( double &items[], int start1 = 0, int start2 = 0, int count = WHOLE_ARRAY ) 
 {
-   return ArrayCopy( _items, items, start1, start2, count ); 
+   return ArrayCopy( data, items, start1, start2, count ); 
 };
 
 /**
@@ -120,5 +122,5 @@ int
    Array::copy 
       ( double &items[], int start1 = 0, int start2 = 0, int count = WHOLE_ARRAY ) 
 {
-   return ArrayCopy( items, _items, start1, start2, count ); 
+   return ArrayCopy( items, data, start1, start2, count ); 
 };

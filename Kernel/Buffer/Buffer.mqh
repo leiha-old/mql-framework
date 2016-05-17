@@ -7,6 +7,7 @@
 #include "../Core/Map.mqh"
 #include "../Plot/Plot.mqh"
 
+
 class Buffer : public Array
 {
    public :   
@@ -18,12 +19,12 @@ class Buffer : public Array
       /** 
        */
       Buffer( ENUM_INDEXBUFFER_TYPE type = INDICATOR_DATA )
-         : _slot ( TOTAL_BUFFERS++ ) 
+         : _slot ( TOTAL_BUFFERS++ ),
+           _totalOfInternalBuffers( 1 )
          {
             _buffers      = new Map(  );
             add           ( pointer( this ) );            
-            SetIndexBuffer( slot(  ), _items, type );
-            
+            SetIndexBuffer( slot(  ), data, type );   
          }
          ;  
 
@@ -57,14 +58,27 @@ class Buffer : public Array
        * Get first buffer 
        * The buffer is created if not already present
        */
-      virtual Buffer* get(  );   
+      virtual Buffer* get(  );
       
+      /** 
+       */
+      int totalBuffers(  );
+      
+      /**
+       */
+      int totalOfInternalBuffers(  );
+      
+      /**
+       */
+      Buffer* totalOfInternalBuffers( int buffers );
+            
    protected :
    
       /**
        * Create a new buffer 
        */
       virtual Buffer* create(  );
+      
 
 /* --------------------
  * Properties
@@ -76,9 +90,41 @@ class Buffer : public Array
    Plot*  _plot;
    Map *  _buffers;
    int static TOTAL_BUFFERS;
+   int    _totalOfInternalBuffers;
       
 // -----
 // --------------------     
+};
+
+
+/** 
+ */
+int 
+   Buffer::totalBuffers
+      (  ) 
+{
+   return _buffers.length();
+};
+
+/*
+ * ------
+ */
+int 
+   Buffer::totalOfInternalBuffers
+      (  )
+{
+   return _totalOfInternalBuffers;
+};
+
+/*
+ * ------
+ */
+Buffer* 
+   Buffer::totalOfInternalBuffers
+      ( int buffers )
+{
+   _totalOfInternalBuffers += buffers;
+   return pointer( this );
 };
 
 

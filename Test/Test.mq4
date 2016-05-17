@@ -26,6 +26,20 @@
 class Test : public Indicator
 {
    public :
+   
+   
+      /**
+       */
+      void onCalculate( int start, int end, double &bufferSrc[], int rates_total, int prev_calculated )
+      {
+         this.buffer().copy( bufferSrc );
+         
+         int ii = start;
+         for( int i = 0; i < end; i++ ) {
+            bufferSrc[ii++] = iRSI( NULL, 0, 14, PRICE_CLOSE, i );
+         }         
+      };
+   
       
       /** 
        */
@@ -33,7 +47,7 @@ class Test : public Indicator
       {  
          
          /**/
-         this.handle ( iRSI( NULL, PERIOD_CURRENT, 7, PRICE_CLOSE ) )
+         this
              .digits ( 2 )
              .plot   (   )
                   .c0lor( clrGray       )

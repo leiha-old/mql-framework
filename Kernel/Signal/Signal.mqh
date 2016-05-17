@@ -7,7 +7,10 @@
 
 class Signal : public Calculator
 {
-   public :   
+   public :
+   
+      static int LONG;
+      static int SHORT;
 
 /* --------------------
  * Constructors
@@ -19,16 +22,17 @@ class Signal : public Calculator
          : Calculator(  )
          {
            _buffers.add( new Buffer() );
+           _buffers.totalOfInternalBuffers( + 1 );
          }
          ;
          
       /** 
        */
-      virtual bool isLong ( int candle );
+      virtual bool isLong         ( int candle );
       
       /** 
        */
-      virtual bool isShort( int candle );    
+      virtual bool isShort        ( int candle );    
 
 /* --------------------
  * Methods
@@ -36,28 +40,35 @@ class Signal : public Calculator
  */ 
       
    protected :
+   
+      /** 
+       */
+      virtual bool isLong         ( double &buffer[], int candle );
+      
+      /** 
+       */
+      virtual bool isShort        ( double &buffer[], int candle );
+      
+      /**
+       */
+      virtual bool isShiftTrend   ( double &buffer[], int candle, double pivot );
+            
+      /**
+       */
+      virtual void onIterateCandle( double &bufferSrc[], int candle, double value ) ;
 
 /* --------------------
  * Properties
  * ----- 
  */
-      /** 
-       */
-      virtual bool isLong ( double &buffer[], int candle );
       
-      /** 
-       */
-      virtual bool isShort( double &buffer[], int candle );
-      
-      /**
-       */
-      virtual bool isShiftTrend( double &buffer[], int candle, double pivot );
-      
-      virtual void onIterateCandle( double &bufferSrc[], int candle, double value ) ;
      
 // -----
 // --------------------     
 };
+
+int Signal::LONG  = 0;
+int Signal::SHORT = 1;
 
 /** 
  */
@@ -66,9 +77,9 @@ void
       ( double &bufferSrc[], int candle, double value ) 
 {
    double v = ( ( value + NormalizeDouble( bufferSrc[ candle - 1 ], 20 ) ) / 2 );
-   buffer(0).add( candle, ( isLong ( bufferSrc, candle) ? v : 0 ) );
-   buffer(1).add( candle, ( isShort( bufferSrc, candle) ? v : 0 ) );
    
+   buffer(0).add( candle, ( isLong ( bufferSrc, candle) ? v : 0 ) );
+   buffer(1).add( candle, ( isShort( bufferSrc, candle) ? v : 0 ) );   
 };
 
 /** 

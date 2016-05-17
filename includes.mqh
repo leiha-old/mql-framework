@@ -3,6 +3,8 @@
 #property version   "1.00"
 #property strict
 
+//#include "./Vendors/iMAOnArray.mqh"
+
 #include "./Kernel/Data/Data.mqh"
 
 #include "./Kernel/Signal/SignalCrossing.mqh"
@@ -10,7 +12,6 @@
 #include "./Kernel/Signal/SignalZone.mqh"
 
 #include "./Kernel/Indicator/Indicator.mqh"
-#include "./Kernel/Indicator/IndicatorRsi.mqh"
 
 #include "./Kernel/MovingAverage/MovingAverage.mqh"
 

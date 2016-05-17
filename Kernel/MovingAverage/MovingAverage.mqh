@@ -15,10 +15,12 @@ class MovingAverage : public Calculator
  */           
       /** 
        */
-      MovingAverage(  ) 
-         :  Calculator(  )
+      MovingAverage( int period ) 
+         :  Calculator(  ),
+            _period         ( period ),
+            _currentPeriod  ( period )
          {
-            
+            _shiftTotal = period;   
          }
          ;
 
@@ -28,21 +30,32 @@ class MovingAverage : public Calculator
  */  
       /**
        */
-      int period(  );
-      
-      /**
-       */
-      MovingAverage* period( int shift );
-      
-      /**
-       */
-      MovingAverage* smooth( int level = 1 );
+      MovingAverage* smooth( int period = 14 );
    
    protected :
       
       /** 
        */
-      virtual void MovingAverage::onIterateCandle ( double &bufferSrc[], int candle, double value ); 
+      virtual void onIterateCandle        ( double &bufferSrc[], int candle, double value ); 
+      
+      /** 
+       */
+      virtual void onEachBeginIteration   ( double &bufferSrc[], int rates_total, int prev_calculated, int iteration );
+      
+      /** 
+       */
+      virtual void onEachEndIteration     ( double &bufferSrc[], int rates_total, int prev_calculated, int iteration );
+      
+      /** 
+       */
+      virtual void onFinished             ( double &bufferSrc[] );
+      
+      /** 
+       */
+      virtual int getIterationsNeeded     (  ) 
+      { 
+         return ArraySize( _smoothPeriods ) + Calculator::getIterationsNeeded(  );
+      };
       
 
 /* --------------------
@@ -51,11 +64,15 @@ class MovingAverage : public Calculator
  */
    /**
     */
-   int _smooth;
+   int _smoothPeriods   [];
    
    /**
     */
    int _period;
+   
+   /**
+    */
+   int _currentPeriod;
       
 // -----
 // --------------------          
@@ -64,44 +81,67 @@ class MovingAverage : public Calculator
 /** 
  */
 void 
+   MovingAverage::onFinished
+      ( double &bufferSrc[] )
+{
+   _currentPeriod = _period;
+};
+
+
+/** 
+ */
+void 
+  MovingAverage::onEachBeginIteration
+   ( double &bufferSrc[], int rates_total, int prev_calculated, int iteration )
+{
+   if( iteration == 1 ) {
+      _currentPeriod = _period;
+   } else {
+      _currentPeriod = _smoothPeriods[ iteration - 2 ];
+   }
+};
+
+/** 
+ */
+void 
+  MovingAverage::onEachEndIteration
+   ( double &bufferSrc[], int rates_total, int prev_calculated, int iteration )
+   {
+      buffer(  ).copy( bufferSrc );
+   };
+
+/** 
+ */
+void 
    MovingAverage::onIterateCandle 
       ( double &bufferSrc[], int candle, double value ) 
 {
-   int period = this.period();
-   for( int ii = 1; ii < period; ii++ ) 
+
+   for( int ii = 1, t = _currentPeriod; ii < t; ii++ ) 
    {
-      value += this.formatValue( bufferSrc[ candle - ii ] );
+      value += bufferSrc[ candle - ii ];
    }
    
-   buffer().add( candle, ( value / period ) );
+   buffer().data[candle] = ( value / _currentPeriod );
+   //buffer().data[candle] = iMAOnArray( bufferSrc, 0, _currentPeriod, 0, MODE_EMA, candle );
 };
 
 /** 
  */
 MovingAverage*
    MovingAverage::smooth
-      ( int level = 1 ) 
+      ( int period = 14 ) 
 { 
-   _smooth = level;
+   int i = ArraySize( _smoothPeriods );
+   int s = i + 1;
+   
+   ArrayResize( _smoothPeriods, s );
+   
+   _smoothPeriods [ i ] = period;
+   
+   if( _shiftTotal < period ) {
+      _shiftTotal = period;
+   }
    
    return pointer(this);
-};
-
-/**
- */
-int 
-   MovingAverage::period
-      (  ) 
-{
-   return _period;
-};
-
-/**
- */
-MovingAverage*
-   MovingAverage::period
-      ( int shift ) 
-{
-   _period = shift;
-   return preloadCandles( shift );
 };

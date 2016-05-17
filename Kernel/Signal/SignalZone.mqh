@@ -34,7 +34,7 @@ class SignalZone : public Signal
       
       /** 
        */
-      virtual bool isLong( double &buffer[], int candle );
+      virtual bool isLong ( double &buffer[], int candle );
    
    protected :
       
