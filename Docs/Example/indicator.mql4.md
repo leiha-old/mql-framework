@@ -29,9 +29,8 @@ class Test : public Indicator
       {
          this.buffer().copy( bufferSrc );
          
-         int ii = start;
-         for( int i = 0; i < end; i++ ) {
-            bufferSrc[ii++] = iRSI( NULL, 0, 14, PRICE_CLOSE, i );
+         for( int i = start; i < end; i++ ) {
+            bufferSrc[i] = iRSI( NULL, 0, 14, PRICE_CLOSE, i );
          }         
       };
    
