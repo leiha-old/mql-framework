@@ -1,8 +1,6 @@
 var NAVTREE =
 [
-  [ "My Project", "index.html", [
-    [ "indicator", "md_Docs_Example_indicator.mql4.html", null ],
-    [ "indicator", "md_Docs_Example_indicator.mql5.html", null ],
+  [ "Framework OOP for MetaQuotes Query Language (MQL 5 & 4)", "index.html", [
     [ "mql-framework", "md_README.html", null ],
     [ "Data Structures", "annotated.html", [
       [ "Data Structures", "annotated.html", "annotated_dup" ],
