@@ -1,191 +1,53 @@
-<!doctype html>
-<html>
+<!DOCTYPE html>
+<html lang="en-us">
   <head>
-    <meta charset="utf-8">
-    <meta http-equiv="X-UA-Compatible" content="chrome=1">
+    <meta charset="UTF-8">
     <title>Mql-framework by leiha</title>
-
-    <link rel="stylesheet" href="stylesheets/styles.css">
-    <link rel="stylesheet" href="stylesheets/github-light.css">
-    <meta name="viewport" content="width=device-width">
-    <!--[if lt IE 9]>
-    <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
-    <![endif]-->
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" type="text/css" href="stylesheets/normalize.css" media="screen">
+    <link href='https://fonts.googleapis.com/css?family=Open+Sans:400,700' rel='stylesheet' type='text/css'>
+    <link rel="stylesheet" type="text/css" href="stylesheets/stylesheet.css" media="screen">
+    <link rel="stylesheet" type="text/css" href="stylesheets/github-light.css" media="screen">
   </head>
   <body>
-    <div class="wrapper">
-      <header>
-        <h1>Mql-framework</h1>
-        <p>Framework OOP for MetaQuotes Query Language (MQL 5)</p>
+    <section class="page-header">
+      <h1 class="project-name">Mql-framework</h1>
+      <h2 class="project-tagline">Framework OOP for MetaQuotes Query Language (MQL 5)</h2>
+      <a href="https://github.com/leiha/mql-framework" class="btn">View on GitHub</a>
+      <a href="https://github.com/leiha/mql-framework/zipball/master" class="btn">Download .zip</a>
+      <a href="https://github.com/leiha/mql-framework/tarball/master" class="btn">Download .tar.gz</a>
+    </section>
 
-        <p class="view"><a href="https://github.com/leiha/mql-framework">View the Project on GitHub <small>leiha/mql-framework</small></a></p>
-
-
-        <ul>
-          <li><a href="https://github.com/leiha/mql-framework/zipball/master">Download <strong>ZIP File</strong></a></li>
-          <li><a href="https://github.com/leiha/mql-framework/tarball/master">Download <strong>TAR Ball</strong></a></li>
-          <li><a href="https://github.com/leiha/mql-framework">View On <strong>GitHub</strong></a></li>
-        </ul>
-      </header>
-      <section>
-        <h1>
+    <section class="main-content">
+      <h1>
 <a id="mql-framework" class="anchor" href="#mql-framework" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>mql-framework</h1>
 
-<p>This framework help you to build your own Indicator with MQL 5 (MetaQuotes Query Language)</p>
+<p>This framework help you to build your own Indicator with MQL 5 or 4 (MetaQuotes Query Language)</p>
 
-<p>NB : It's the second iteration but it's an active project so if you find a bug or you want a new feature make an issue ;)</p>
+<p>NB : if you find a bug or you want a new feature make an issue ;)</p>
 
 <p>Example of custom indicator :</p>
 
-<p><img src="https://drive.google.com/file/d/0Bx9sZwwQsObyNXVseXdHbm5xd28/view?usp=sharing" alt=""></p>
+<h4>
+<a id="mql-5" class="anchor" href="#mql-5" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>MQL 5</h4>
 
-<div class="highlight highlight-source-c++"><pre>
-#property indicator_separate_window
+<p><a href="https://github.com/leiha/mql-framework/blob/0.3/Docs/Example/indicator.mql5.md">https://github.com/leiha/mql-framework/blob/0.3/Docs/Example/indicator.mql5.md</a></p>
 
-#property indicator_minimum <span class="pl-c1">0</span>
-#property indicator_maximum <span class="pl-c1">100</span>
-#property indicator_level1  <span class="pl-c1">30</span>
-#property indicator_level2  <span class="pl-c1">50</span>
-#property indicator_level3  <span class="pl-c1">70</span>
+<h4>
+<a id="mql-4" class="anchor" href="#mql-4" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>MQL 4</h4>
 
-#property indicator_buffers <span class="pl-c1">20</span>
-#property indicator_plots   <span class="pl-c1">20</span>
-
-#<span class="pl-k">include</span> <span class="pl-s"><span class="pl-pds">"</span>includes.mqh<span class="pl-pds">"</span></span> <span class="pl-c">// includes all files of the framework (path to edit)</span>
-
-<span class="pl-c">// ------------------------------------------------</span>
-
-<span class="pl-k">class</span> <span class="pl-en">Test</span> : <span class="pl-k">public</span> <span class="pl-en">Indicator</span>
-{
-   public :
-
-      <span class="pl-c">/** </span>
-<span class="pl-c">       */</span>
-      <span class="pl-k">void</span> <span class="pl-en">onInit</span> () 
-      {
-         BufferMA*       maA = <span class="pl-k">new</span> <span class="pl-c1">BufferMA</span>      (  <span class="pl-c1">7</span> );
-         BufferMA*       maB = <span class="pl-k">new</span> <span class="pl-c1">BufferMA</span>      ( <span class="pl-c1">21</span> );         
-         BufferMA*       maC = <span class="pl-k">new</span> <span class="pl-c1">BufferMA</span>      ( <span class="pl-c1">55</span> );
-         SignalZone*     szA = <span class="pl-k">new</span> <span class="pl-c1">SignalZone</span>    ( <span class="pl-c1">70</span>, <span class="pl-c1">30</span> );
-         SignalZone*     szB = <span class="pl-k">new</span> <span class="pl-c1">SignalZone</span>    ( <span class="pl-c1">70</span>, <span class="pl-c1">30</span> );
-         SignalCrossing* scA = <span class="pl-k">new</span> <span class="pl-c1">SignalCrossing</span>( maB, maC );
-         SignalTrend*    stA = <span class="pl-k">new</span> <span class="pl-c1">SignalTrend</span>   (  );
-
-         maA
-            .<span class="pl-c1">smooth</span>(<span class="pl-c1">1</span>)
-            .<span class="pl-c1">buffer</span>(maB)
-            .<span class="pl-c1">buffer</span>(szB)
-            .<span class="pl-c1">plot</span>()            
-               .<span class="pl-c1">c0lor</span>(clrLightPink)
-               .<span class="pl-c1">type</span> (DRAW_LINE)
-               .<span class="pl-c1">style</span>(STYLE_DOT)
-            ;
-
-         maB
-            .<span class="pl-c1">smooth</span>(<span class="pl-c1">2</span>)
-            .<span class="pl-c1">buffer</span>(stA)
-            .<span class="pl-c1">plot</span>()
-               .<span class="pl-c1">c0lor</span>(clrBlue)
-               .<span class="pl-c1">type</span> (DRAW_NONE)
-               .<span class="pl-c1">style</span>(STYLE_DOT)
-            ;
-
-         maC
-            .<span class="pl-c1">smooth</span>(<span class="pl-c1">2</span>)
-            .<span class="pl-c1">plot</span>()
-               .<span class="pl-c1">c0lor</span>(clrOrange)
-               .<span class="pl-c1">type</span> (DRAW_LINE)
-            ;
-
-         stA.<span class="pl-c1">plot</span>(<span class="pl-c1">0</span>)
-            .<span class="pl-c1">emptyValue</span>()
-            .<span class="pl-c1">c0lor</span>(clrGreen)
-            .<span class="pl-c1">type</span> (DRAW_LINE)
-            .<span class="pl-c1">width</span>(<span class="pl-c1">1</span>)
-            ;
-
-         stA.<span class="pl-c1">plot</span>(<span class="pl-c1">1</span>)
-            .<span class="pl-c1">emptyValue</span>()
-            .<span class="pl-c1">c0lor</span>(clrRed)
-            .<span class="pl-c1">type</span> (DRAW_LINE)
-            .<span class="pl-c1">width</span>(<span class="pl-c1">1</span>)
-            ;
-
-         szA.<span class="pl-c1">plot</span>(<span class="pl-c1">0</span>)
-            .<span class="pl-c1">emptyValue</span>()
-            .<span class="pl-c1">c0lor</span>(clrPink)
-            .<span class="pl-c1">type</span> (DRAW_ARROW)
-            .<span class="pl-c1">width</span>(<span class="pl-c1">1</span>)
-            ;
-
-         szA.<span class="pl-c1">plot</span>(<span class="pl-c1">1</span>)
-            .<span class="pl-c1">emptyValue</span>()
-            .<span class="pl-c1">c0lor</span>(clrLightGreen)
-            .<span class="pl-c1">type</span> (DRAW_ARROW)
-            .<span class="pl-c1">width</span>(<span class="pl-c1">1</span>)
-            ;
-
-         szB.<span class="pl-c1">plot</span>(<span class="pl-c1">0</span>)
-            .<span class="pl-c1">emptyValue</span>()
-            .<span class="pl-c1">c0lor</span>(clrRed)
-            .<span class="pl-c1">type</span> (DRAW_ARROW)
-            .<span class="pl-c1">width</span>(<span class="pl-c1">5</span>)
-            ;
-
-         szB.<span class="pl-c1">plot</span>(<span class="pl-c1">1</span>)
-            .<span class="pl-c1">emptyValue</span>()
-            .<span class="pl-c1">c0lor</span>(clrGreen)
-            .<span class="pl-c1">type</span> (DRAW_ARROW)
-            .<span class="pl-c1">width</span>(<span class="pl-c1">5</span>)
-            ;
-
-         scA.<span class="pl-c1">plot</span>(<span class="pl-c1">0</span>)
-            .<span class="pl-c1">emptyValue</span>()
-            .<span class="pl-c1">c0lor</span>(clrBlue)
-            .<span class="pl-c1">type</span> (DRAW_ARROW)
-            .<span class="pl-c1">width</span>(<span class="pl-c1">5</span>)
-            ;
-
-         scA.<span class="pl-c1">plot</span>(<span class="pl-c1">1</span>)
-            .<span class="pl-c1">emptyValue</span>()
-            .<span class="pl-c1">c0lor</span>(clrOrange)
-            .<span class="pl-c1">type</span> (DRAW_ARROW)
-            .<span class="pl-c1">width</span>(<span class="pl-c1">5</span>)
-            ;
-
-         <span class="pl-v">this</span>.<span class="pl-c1">handle</span>(<span class="pl-c1">iRSI</span>( <span class="pl-c1">NULL</span>, PERIOD_CURRENT, <span class="pl-c1">14</span>, PRICE_CLOSE))
-            .<span class="pl-c1">digits</span>(<span class="pl-c1">2</span>)
-
-            .<span class="pl-c1">buffer</span>(maA)
-            .<span class="pl-c1">buffer</span>(maC)
-
-            .<span class="pl-c1">buffer</span>(scA)
-            .<span class="pl-c1">buffer</span>(szA)
-
-            .<span class="pl-c1">plot</span>()
-               .<span class="pl-c1">c0lor</span>(clrGray)
-               .<span class="pl-c1">type</span> (DRAW_NONE)
-               .<span class="pl-c1">style</span>(STYLE_DASHDOT)          
-            ;
-
-      };
-};
-
-Test *test = <span class="pl-k">new</span> Test();
-
-<span class="pl-c">// ------------------------------------------------</span>
-
-#<span class="pl-k">include</span> <span class="pl-s"><span class="pl-pds">"</span>bootstrap.mqh<span class="pl-pds">"</span></span> <span class="pl-c">// Includes test handling</span>
-</pre></div>
+<p><a href="https://github.com/leiha/mql-framework/blob/0.3/Docs/Example/indicator.mql4.md">https://github.com/leiha/mql-framework/blob/0.3/Docs/Example/indicator.mql4.md</a></p>
 
 <p>Enjoy ;)</p>
-      </section>
-      <footer>
-        <p>This project is maintained by <a href="https://github.com/leiha">leiha</a></p>
-        <p><small>Hosted on GitHub Pages &mdash; Theme by <a href="https://github.com/orderedlist">orderedlist</a></small></p>
+
+      <footer class="site-footer">
+        <span class="site-footer-owner"><a href="https://github.com/leiha/mql-framework">Mql-framework</a> is maintained by <a href="https://github.com/leiha">leiha</a>.</span>
+
+        <span class="site-footer-credits">This page was generated by <a href="https://pages.github.com">GitHub Pages</a> using the <a href="https://github.com/jasonlong/cayman-theme">Cayman theme</a> by <a href="https://twitter.com/jasonlong">Jason Long</a>.</span>
       </footer>
-    </div>
-    <script src="javascripts/scale.fix.js"></script>
-    
+
+    </section>
+
+  
   </body>
 </html>
