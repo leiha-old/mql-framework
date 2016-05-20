@@ -1,0 +1,6 @@
+var searchData=
+[
+  ['c0lor',['c0lor',['../d6/d4c/class_plot.html#af4d791a71eb01b0b4ffc61c766de2051',1,'Plot::c0lor(int c0lor)'],['../d6/d4c/class_plot.html#a2397495121d1c305301808e7b05ac430',1,'Plot::c0lor(int c0lor, int i)'],['../d6/d4c/class_plot.html#ab22ef63fc210e594cb17e1d5ce1716ea',1,'Plot::c0lor(int c0lor)'],['../d6/d4c/class_plot.html#a6300b7b4477b9bdd1ec55cafd4162cdc',1,'Plot::c0lor(int c0lor, int i)'],['../d1/d73/class_plot_unifier.html#a716cb30692bc6d76bece1f9003ca4279',1,'PlotUnifier::c0lor(int c0lor)'],['../d1/d73/class_plot_unifier.html#ab8542a90f53c4a8411399e9e3dcd8ff6',1,'PlotUnifier::c0lor(int plot, int c0lor)'],['../d1/d73/class_plot_unifier.html#a5bd5d6d8b03fd7b19fbb3737dd7be431',1,'PlotUnifier::c0lor(int c0lor)'],['../d1/d73/class_plot_unifier.html#a4b5dde5dc52e6b829620675befb157ce',1,'PlotUnifier::c0lor(int plot, int c0lor)']]],
+  ['calculator',['Calculator',['../dd/db5/class_calculator.html',1,'']]],
+  ['create',['create',['../d5/d2a/class_buffer.html#a0f0db8a66cc12fb12f9169b3a94216d8',1,'Buffer::create()'],['../dd/db5/class_calculator.html#ac2a75e8b91b66ad51d556ed40de75ac5',1,'Calculator::create()'],['../d6/d4c/class_plot.html#a191d72b810328606f0c533b6dd398079',1,'Plot::create(int slot)'],['../d6/d4c/class_plot.html#a44f59395fa44c775b0c80391f1bd24b2',1,'Plot::create(int slot)']]]
+];

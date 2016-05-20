@@ -1,0 +1,25 @@
+var class_position =
+[
+    [ "Position", "d7/d3b/class_position.html#a369a577425f8ba02e8750d04b6a088db", null ],
+    [ "comment", "d7/d3b/class_position.html#a4a62841a867ea37a4534394aa0c853cf", null ],
+    [ "getDouble", "d7/d3b/class_position.html#af159f9cbb59843439e888ae9f443f33c", null ],
+    [ "getInteger", "d7/d3b/class_position.html#a11d7ca48ee827240943d38491bfda255", null ],
+    [ "getString", "d7/d3b/class_position.html#a4ce5d713166419e9227bd7d26183a83c", null ],
+    [ "identifier", "d7/d3b/class_position.html#a7a7035a3845c2095361d0f444f7ae22b", null ],
+    [ "magic", "d7/d3b/class_position.html#a0691aa7354165f887ae94f52c61f989c", null ],
+    [ "priceCurrent", "d7/d3b/class_position.html#a4b0a1179bcd53ab8094571d63186f5b6", null ],
+    [ "priceOpen", "d7/d3b/class_position.html#a68ec5abc2761fb671d56fd760df3c205", null ],
+    [ "priceStopLimit", "d7/d3b/class_position.html#a9632d31fd01f807cefe5443a4f63a846", null ],
+    [ "profit", "d7/d3b/class_position.html#aaeaa4b89c1f73a901f3e62ae7945d2a6", null ],
+    [ "stopLoss", "d7/d3b/class_position.html#a9708defb7981273eca4fa610ad04c392", null ],
+    [ "swap", "d7/d3b/class_position.html#a2890ec203535485c1d71006dad6e77d8", null ],
+    [ "symbol", "d7/d3b/class_position.html#af32a8b3933b13a0844bce0aa3ec42149", null ],
+    [ "takeProfit", "d7/d3b/class_position.html#a0dc5a8ebd1986b1a606af9a17911c92f", null ],
+    [ "ticket", "d7/d3b/class_position.html#ae6bb8a5d8f6dcd3b0722a8f9f1421bcc", null ],
+    [ "time", "d7/d3b/class_position.html#af03cadbc596ceae6ffa98d45466484c9", null ],
+    [ "timeMsc", "d7/d3b/class_position.html#a29bb1bface957381266b2746a5a94762", null ],
+    [ "timeUpdate", "d7/d3b/class_position.html#afe615e605261e46b8837bdcd325e9c6a", null ],
+    [ "timeUpdateMsc", "d7/d3b/class_position.html#a7c05cb931c8075dc8fcf5db6f34c5364", null ],
+    [ "type", "d7/d3b/class_position.html#af450a305a178d906f33f7e29e4be1565", null ],
+    [ "volume", "d7/d3b/class_position.html#adc7562e7e85e938f8562854d6fd89869", null ]
+];
