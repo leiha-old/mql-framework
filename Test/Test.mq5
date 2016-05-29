@@ -33,7 +33,7 @@ class Test : public Indicator
       {  
          
          /**/
-         this.handle ( iRSI( NULL, PERIOD_CURRENT, 7, PRICE_CLOSE ) )
+         this.handle ( iRSI( NULL, PERIOD_CURRENT, 21, PRICE_CLOSE ) )
              .digits ( 2 )
              .plot   (   )
                   .c0lor( clrGray       )
@@ -59,7 +59,7 @@ class Test : public Indicator
          maB
             .plot(  )
                .c0lor      ( clrOrange   )
-               .type       ( DRAW_LINE   )
+               .type       ( DRAW_NONE   )
                .style      ( STYLE_SOLID )
          ;
          

@@ -130,8 +130,6 @@ class Plot : public Object
 // --------------------  
 };
 
-#include "./Plot.inc.mqh"
-
 /** 
  */
 Plot* 

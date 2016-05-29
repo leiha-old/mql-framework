@@ -25,21 +25,17 @@
 
 class Test : public Indicator
 {
-   public :
-   
-   
+   protected : 
+      
       /**
        */
-      void onCalculate( int start, int end, double &bufferSrc[], int rates_total, int prev_calculated )
+      double onCalculate( int candle )
       {
-         this.buffer().copy( bufferSrc );
-         
-         for( int i = start; i < end; i++ ) {
-            bufferSrc[i] = iRSI( NULL, 0, 14, PRICE_CLOSE, i );
-         }         
+         return iRSI( NULL, 0, 14, PRICE_CLOSE, candle );   
       };
+
+   public :
    
-      
       /** 
        */
       void onInit () 

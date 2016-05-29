@@ -116,8 +116,6 @@ class PlotUnifier : public Object
 // --------------------  
 };
 
-#include "./PlotUnifier.inc.mqh"
-
 /** 
  */
 PlotUnifier* 

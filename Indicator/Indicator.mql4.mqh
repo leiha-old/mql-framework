@@ -44,21 +44,17 @@ class Indicator : public Calculator
        */
       Indicator* digits( int digits );
       
-      /**
-       */
-      Indicator* handle( int handle );
-      
       /** 
        */
       virtual int onCalculate ( int rates_total, int prev_calculated );
       
       /** 
        */
-      MovingAverage* ma ( int period, int smooth = 0 );
+      MovingAverage* ma ( int period, int smooth = 0, Calculator* calculator = NULL );
       
       /** 
        */
-      SignalZone* sz ( double bought, double sold );
+      SignalZone* sz ( double bought, double sold, Calculator* calculator = NULL );
       
       /** 
        */
@@ -70,10 +66,6 @@ class Indicator : public Calculator
       
    protected :
       
-      /** 
-       */
-      int handle (  );
-   
       /** 
        */
       Indicator* setString( ENUM_CUSTOMIND_PROPERTY_STRING property, string value );
@@ -88,7 +80,15 @@ class Indicator : public Calculator
       
       /**
        */
-      void onCalculate( int start, int end, double &bufferSrc[], int rates_total, int prev_calculated );
+      virtual void onCalculate( int start, int end, double &bufferSrc[], int rates_total, int prev_calculated );
+      
+      /**
+       */
+      virtual void onCalculate( double &bufferSrc[], int candle );
+      
+      /**
+       */
+      virtual double onCalculate( int candle ) { return 0; };
       
       /**
        */
@@ -98,33 +98,9 @@ class Indicator : public Calculator
  * Properties
  * ----- 
  */     
-     int _handle;
      
 // -----
 // --------------------     
-};
-
-#include "./Indicator.inc.mqh"
-
-/* 
- * ------
- */
-int 
-   Indicator::handle 
-      (  ) 
-{
-   return _handle;
-};
-
-/* 
- * ------
- */
-Indicator*
-   Indicator::handle 
-      ( int handle ) 
-{
-   _handle = handle;
-   return pointer( this );
 };
 
 
@@ -135,33 +111,29 @@ int
    Indicator::barsCalulated
       (  )
 {
-   return BarsCalculated( handle() );
-};   
+   return IndicatorCounted( );
+};
 
 /* 
  * ------
  */
 void 
    Indicator::onCalculate
-      ( int start, int end, double &bufferSrc[], int rates_total, int prev_calculated ) 
+      ( int start, int end, double &bufferSrc[], int rates_total, int prev_calculated )
 {
-   int to_copy = rates_total;
-   if( prev_calculated < rates_total || prev_calculated >= 0 ) {
-      to_copy = rates_total - prev_calculated;
-      if( prev_calculated > 0 ) { 
-         to_copy++;
-      }
-   }
-
-   double b[];
-   if( CopyBuffer( this.handle(), 0, 0, to_copy, b ) <= 0 ) {
-      return; 
-   }
-   
    this.buffer().copy( bufferSrc );
    
-   int ii = start;
-   for( int i = 0; i < end; i++ ) {
-      bufferSrc[ii++] = b[i];
-   }
-};      
+   for( int i = start; i < end; i++ ) {
+      this.onCalculate( bufferSrc, i );
+   }         
+};
+
+/* 
+ * ------
+ */
+void 
+   Indicator::onCalculate
+      ( double &bufferSrc[], int candle )
+{
+   bufferSrc[candle] = this.onCalculate( candle );   
+};
